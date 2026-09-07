@@ -1,0 +1,44 @@
+{
+  "model": "opus[1m]",
+  "effortLevel": "high",
+  "theme": "dark",
+  "permissions": {
+    "allow": ["mcp__codegraph__*"]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "codegraph prompt-hook" }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "cols=${COLUMNS:-}; case \"$cols\" in \"\"|*[!0-9]*) cols=$(stty size </dev/tty 2>/dev/null | awk '{print $2}');; esac; case \"$cols\" in \"\"|*[!0-9]*) cols=120;; esac; export COLUMNS=$(( cols > 4 ? cols - 4 : 1 )); plugin_dir=$(ls -1d \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}\"/plugins/cache/*/claude-hud/*/ 2>/dev/null | sort -V | tail -1); exec node \"${plugin_dir}dist/index.js\"",
+    "refreshInterval": 5
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "ponytail@ponytail": true,
+    "context7@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "claude-hud@claude-hud": true,
+    "mattpocock-skills@mattpocock": true,
+    "frontend-design@claude-plugins-official": false,
+    "feature-dev@claude-plugins-official": false,
+    "claude-md-management@claude-plugins-official": false
+  },
+  "extraKnownMarketplaces": {
+    "ponytail": {
+      "source": { "source": "github", "repo": "DietrichGebert/ponytail" }
+    },
+    "claude-hud": {
+      "source": { "source": "github", "repo": "jarrodwatts/claude-hud" }
+    },
+    "mattpocock": {
+      "source": { "source": "github", "repo": "mattpocock/skills" }
+    }
+  }
+}

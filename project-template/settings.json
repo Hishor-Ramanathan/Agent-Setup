@@ -1,0 +1,13 @@
+{
+  "_note": "Per-project settings. Hook wiring is documented in settings-hooks.md rather than hard-coded here, because the commands carry absolute paths.",
+  "outputStyle": "concise",
+  "permissions": {
+    "allow": [],
+    "ask": [
+      "Bash(git push*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean*)",
+      "Bash(rm -rf*)"
+    ]
+  }
+}
