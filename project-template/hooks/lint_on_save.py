@@ -8,7 +8,7 @@ import os
 import subprocess
 from pathlib import Path
 
-from cmthub import hook_input, respond, uv, worktree_root
+from hooks_common import hook_input, respond, uv, worktree_root
 
 # each family backs a line of the style contract; families that fired on the
 # exemplar apps (ARG, FBT, N, PLR2004, SLF) were left out on purpose

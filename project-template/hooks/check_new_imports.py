@@ -1,5 +1,5 @@
 """
-PreToolUse hook: an Edit/Write on cmthub python code that introduces an
+PreToolUse hook: an Edit/Write on project python code that introduces an
 import no tracked file of that worktree uses yet answers "ask", so Hishor
 approves the new dependency before it lands.
 """
@@ -8,7 +8,7 @@ import re
 import subprocess
 from pathlib import Path
 
-from cmthub import hook_input, respond, worktree_root
+from hooks_common import hook_input, respond, worktree_root
 
 IMPORT_RE = re.compile(r"^\s*(?:from|import)\s+([A-Za-z_][\w.]*)", re.MULTILINE)
 

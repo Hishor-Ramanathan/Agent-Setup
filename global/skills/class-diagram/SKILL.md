@@ -19,7 +19,7 @@ Graphviz **bundled** — no system Graphviz install needed.
 ## Rules (token discipline)
 
 - **Do NOT read the source files. Do NOT hand-draw the diagram.** Just run the command.
-- Run from the repo root that owns the code (default: `C:/Projects/Document_Analyzer/cmthub`).
+- Run from the repo root that owns the code.
 - Report the output path in one line. Only show the diagram inline if the user asks.
 
 ## Output layout (IMPORTANT — never overwrite the user's edits)
@@ -41,7 +41,7 @@ Graphviz **bundled** — no system Graphviz install needed.
 
 ```bash
 OUT="C:/Projects/Document_Analyzer/.claude/docs/diagrams/generated"; mkdir -p "$OUT"
-uv run --directory C:/Projects/Document_Analyzer/cmthub pyreverse -o mmd -p NAME -d "$OUT" TARGET
+uv run --directory <REPO_ROOT> pyreverse -o mmd -p NAME -d "$OUT" TARGET
 mv "$OUT/classes_NAME.mmd" "$OUT/NAME.mmd"
 { echo '# NAME — class diagram (GENERATED — do not edit here; copy to ../NAME.md to tune)'; echo
   echo '```mermaid'; cat "$OUT/NAME.mmd"; echo '```'; } > "$OUT/NAME.md"

@@ -1,5 +1,5 @@
 """
-Shared plumbing for the cmthub hooks: reads the hook payload, finds the
+Shared plumbing for the project hooks: reads the hook payload, finds the
 worktree a file belongs to, runs tools through that worktree's uv env.
 """
 
@@ -20,7 +20,7 @@ def hook_input() -> dict:
 def worktree_root(path: str) -> Path | None:
     """
     The nearest ancestor holding a pyproject.toml, or None for files outside
-    any cmthub worktree.
+    any project worktree.
     """
     for parent in Path(path).resolve().parents:
         if (parent / "pyproject.toml").exists():

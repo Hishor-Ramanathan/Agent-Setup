@@ -8,7 +8,7 @@ import re
 import subprocess
 from pathlib import Path
 
-from cmthub import hook_input, respond, uv
+from hooks_common import hook_input, respond, uv
 
 # a commit at the start of a shell segment; a quoted mention elsewhere is not one
 COMMIT_RE = re.compile(r"(?:^|&&|\|\||;)\s*git\s+(?:-C\s+\S+\s+)?commit\b")
@@ -20,7 +20,7 @@ MESSAGE_RE = re.compile(
     r"-m\s+(?:\"\$\(cat\s+<<'?EOF'?\n(.*?)\nEOF|\"(.*?)\"|'(.*?)')", re.DOTALL
 )
 NOT_AN_AUTHOR = ("co-authored-by", "generated with", "claude")
-PYLINT_ENV = {"DJANGO_SETTINGS_MODULE": "cmthub.settings.prod"}
+PYLINT_ENV = {"DJANGO_SETTINGS_MODULE": "<project>.settings.prod"}
 
 
 def repo_root(command: str, cwd: str) -> Path | None:

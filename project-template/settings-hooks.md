@@ -56,13 +56,13 @@ over a long session. A hook is code — it fires every time.
 | `check_new_imports.py` | `PreToolUse` Write\|Edit | Returns `ask` when the edit adds a third-party import that isn't already used in the project. Stops silent dependency creep. |
 | `check_commit.py` | `PreToolUse` Bash | Matches `git commit`, runs the whole-tree lint/type/pylint gate, blocks on failure. **Judge pylint by exit code, not score** — 4 = fixme, 8 = R6103 walrus, 16 = convention. |
 | `lint_on_save.py` | `PostToolUse` Write\|Edit | ruff format + `--fix`; failures come back as feedback so the model self-corrects. |
-| `cmthub.py` | — | Shared helper, not itself a hook. |
+| `hooks_common.py` | — | Shared helper, not itself a hook. |
 
 ## The gotcha that will bite you
 
 Hooks run with `cwd` = **project root**, which in the umbrella layout has no
 `pyproject.toml`. A bare `uv run …` therefore resolves the wrong environment — or
-none. Every subprocess call routes through `cmthub.py::uv()`, which passes
+none. Every subprocess call routes through `hooks_common.py::uv()`, which passes
 `--project <worktree>` and sets `cwd`. Rename that module per project; keep the
 wrapper.
 

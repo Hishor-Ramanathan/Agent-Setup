@@ -1,5 +1,5 @@
 """
-PreToolUse hook: the first edit of cmthub code (or of a test) in a session
+PreToolUse hook: the first edit of project code (or of a test) in a session
 loads the matching style contract into context, so the gate no longer
 depends on remembering to read it. `--reset` forgets the session's markers,
 wired to PreCompact so the contract returns after a compaction.
@@ -9,7 +9,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from cmthub import hook_input, respond, worktree_root
+from hooks_common import hook_input, respond, worktree_root
 
 PROMPTS = Path(__file__).resolve().parents[1] / "reference" / "prompts"
 

@@ -95,7 +95,7 @@ from a Django/uv project — adapt the paths):
 | `check_new_imports.py` | `PreToolUse` on Write\|Edit | Asks before a new third-party import lands. Stops silent dependency creep. |
 | `lint_on_save.py` | `PostToolUse` on Write\|Edit | Runs ruff format + `--fix`, feeds failures back as feedback so the model self-corrects. |
 | `check_commit.py` | `PreToolUse` on Bash(git commit) | Gate: ruff + mypy + pylint must pass. **Judge pylint by exit code, not score** — 4 = `# TODO:` fixme, 8 = R6103 walrus, 16 = convention. |
-| `cmthub.py` | — | Shared helper. Hooks run with `cwd` = project root, which has no `pyproject.toml`; everything routes through its `uv()` wrapper (`--project` + `cwd`=worktree) or `uv` picks the wrong environment. |
+| `hooks_common.py` | — | Shared helper. Hooks run with `cwd` = project root, which has no `pyproject.toml`; everything routes through its `uv()` wrapper (`--project` + `cwd`=worktree) or `uv` picks the wrong environment. |
 
 ### Output style ([`global/output-styles/concise.md`](global/output-styles/concise.md))
 
@@ -227,6 +227,6 @@ draw every turn — draw at review checkpoints.
     ├── settings.json          output style + destructive-action prompts
     ├── settings-hooks.md      copy-paste hook wiring
     ├── hooks/                 working hook examples
-    ├── reference/prompts/     the style contracts hooks inject
+    ├── reference/prompts/     how to write the style contracts hooks inject
     └── docs/ issues/ mrs/ tools/
 ```
