@@ -218,7 +218,24 @@ I move them from the skill's default `docs/agents/` into
 sits outside every worktree. See
 [`project-template/reference/agents/README.md`](project-template/reference/agents/README.md).
 
-### The loop: grill → capture → triage → promote → spec → plan → build → push
+### The loop: two entry points, one tracker
+
+I first wrote this as **one** numbered list, and it was wrong. *Capture → triage
+→ promote* answers **where an issue lives**. *Spec → tickets → build* answers
+**when work happens**. Numbering them together forces a false ordering between
+the two, and the version that produced had me cutting tickets *before* the spec
+they're sliced from.
+
+They're two entry points into the same tracker. Which one you're in is decided by
+a single question: **did I start this, or did it arrive?**
+
+---
+
+#### A. Work I start — grill → spec → tickets → build → push
+
+No triage anywhere in this branch. Tickets that come out of `/to-tickets` are
+agent-ready by construction; triaging them is re-asking a question you just
+answered.
 
 **0. Grill, before anything gets written down.** The
 [grilling](https://aihero.dev/skills-grilling) family interviews you until nothing
@@ -243,9 +260,42 @@ The failure mode to watch: answering "agreed, agreed, agreed" for forty question
 It feels productive because it was long, and nothing was decided. **A session with
 no pushback from me is a session I didn't need.**
 
+1. **Spec.** `/to-spec` synthesises the grilling conversation — no second
+   interview, it just writes down what you already settled. Do this *instead of*
+   clearing the context: `grill-with-docs` only persists terms and ADR-worthy
+   decisions, so everything else you agreed exists solely in that context window.
+   Close the tab and it's gone.
+2. **Tickets.** `/to-tickets` slices the spec into **tracer bullets** — vertical
+   cuts through every layer, each one demoable alone and sized to one fresh
+   context window — and declares which tickets block which. The spec is an *input*
+   here. That's the whole reason it comes first.
+3. **`/clear`, then build.** `/implement-all` walks the tickets in dependency
+   order, one fresh subagent per ticket. Hooks enforce style, imports, lint.
+   For code, the plan inside a ticket is **class + method signatures with one-line
+   docstrings, and which file each lives in** — bodies only after my go, because
+   signatures are where design errors are cheap to catch.
+4. **Walk me through it.** **What / why / which pattern / what breaks**, so I can
+   defend every line in review.
+5. **Push.** I review locally and push. The agent never pushes and never adds
+   itself as co-author.
+
+**Steps 0–2 happen in ONE context window.** No `/clear`, no `/compact` between
+them — the spec and the tickets are both compressions of that conversation, and
+compressing a compression loses the thing you were trying to keep.
+
+Small enough for one session? Skip both and `/implement` directly. Ceremony you
+don't need is still ceremony.
+
+---
+
+#### B. Work that arrives — capture → triage → promote
+
+Someone else's bug report, or an idea I had in the shower. It hasn't been
+grilled, so it can't be specced yet.
+
 1. **Capture.** Every issue starts as a note in `.claude/issues/`, opened as an
    Obsidian board (`issues.base`). Cheap to write, zero ceremony, no tracker
-   round-trip. `/to-tickets` turns a grilling session into these.
+   round-trip.
 2. **Triage.** `/triage` sets `status:` frontmatter — one of `needs-triage`,
    `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. Local, not remote
    labels.
@@ -253,18 +303,19 @@ no pushback from me is a session I didn't need.**
    via a project skill that owns the house format. Most notes never graduate —
    that's the point. This **inverts the skills' default**, so `issue-tracker.md`
    states it explicitly.
-4. **Spec.** `/to-spec` on the grilling conversation → `.claude/mrs/<mr>/spec.md`.
-   Do this *instead of* clearing the context: `grill-with-docs` only persists terms
-   and ADR-worthy decisions, so everything else you agreed exists solely in that
-   context window.
-5. **Plan → shape first.** For code, the plan is **class + method signatures with
-   one-line docstrings, and which file each lives in**. Bodies only after my go.
-   Signatures are where design errors are cheap to catch.
-6. **Build.** Agent writes it. Hooks enforce style, imports, lint. Then it walks me
-   through: **what / why / which pattern / what breaks** — so I can defend every
-   line in review.
-7. **Push.** I review locally and push. The agent never pushes and never adds
-   itself as co-author.
+
+A promoted ticket that turns out to need design work doesn't get implemented
+straight off the tracker. It re-enters branch A at the grill.
+
+#### Where `/to-spec` actually puts the spec
+
+`to-spec` publishes to "the issue tracker" and labels it `ready-for-agent` — and
+`issue-tracker.md` is what defines where that is. With the two-stage inversion
+above, the literal reading is *a vault note*, which is **not** where I keep specs
+(`.claude/mrs/<mr>/spec.md`).
+
+So say it explicitly in `issue-tracker.md`. A skill that has to guess will guess
+wrong, and this is exactly the class of thing that file exists to pin down.
 
 ### Docs: what earns a file
 

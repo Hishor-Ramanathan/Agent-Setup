@@ -40,3 +40,16 @@ skills' default**, so it has to be stated, not implied:
 
 > When a skill says "create an issue", it means write a local note. Only the
 > explicit promotion step reaches the remote tracker.
+
+## The one that bit me: where a spec lands
+
+`to-spec` doesn't take a path. It "publishes to the issue tracker", which means
+**`issue-tracker.md` decides where specs go** — and under the two-stage
+inversion above, the literal reading is *a vault note*, not a spec file.
+
+If you keep specs somewhere specific, add a line saying so:
+
+> A spec from `/to-spec` is not an issue note. Write it to
+> `.claude/mrs/<mr-slug>/spec.md` and leave the tracker alone.
+
+Otherwise the skill does exactly what you told it to, in the wrong folder.
