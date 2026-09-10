@@ -3,6 +3,10 @@
   "remoteControlAtStartup": true,
   "effortLevel": "high",
   "theme": "dark",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
   "permissions": {
     "allow": ["mcp__codegraph__*"]
   },

@@ -33,6 +33,7 @@ overwrite — yours may hold auth/remote state). The blocks that matter:
 - `hooks.UserPromptSubmit` → `codegraph prompt-hook`. Drop it if you don't use CodeGraph.
 - `statusLine` — the claude-hud command. Drop the block if you skip claude-hud (it errors without it).
 - `model: opus[1m]`, `effortLevel: high`, `theme: dark`.
+- `voice` + `remoteControlAtStartup` — see below.
 
 **Restart Claude Code.** Verify with `/plugin` and `/status`.
 
@@ -44,6 +45,71 @@ Machine-specific things deliberately **not** in this repo: MCP server config
 
 `/output-style concise` — or per project via `outputStyle` in the project
 `settings.json`.
+
+### Voice — two separate things
+
+They solve different problems and can both be on. Start with the first.
+
+#### a. Built-in dictation — speech *in*
+
+Transcription runs on Anthropic's servers, so there is **no API key, no cloud
+project and no local model**. It needs a Claude.ai login (not API-key auth —
+Bedrock/Vertex/Foundry are out), a microphone, and nothing else.
+
+```json
+"voice": { "enabled": true, "mode": "hold" }
+```
+
+`hold` is push-to-talk: hold **Space** in an empty prompt, speak, release to
+send. `tap` starts and stops on separate taps. Toggle in-session with `/voice`,
+`/voice tap`, `/voice off`.
+
+| Also under `voice` | Does |
+|---|---|
+| `autoSubmit` | send on release (`hold`), or on 3+ words (`tap`) |
+| `language` | dictation language; falls back to the global `language` |
+| `pushToTalk` | the hold key — rebind in `~/.claude/keybindings.json` |
+
+**Windows:** works natively. Allow desktop apps under Settings → Privacy &
+security → Microphone. On WSL2 you need WSLg.
+
+Docs: <https://code.claude.com/docs/en/voice-dictation>
+
+#### b. VoiceMode MCP — spoken conversation, fully local
+
+Dictation only carries words *in*. **VoiceMode** adds the reply out loud, so the
+session becomes a conversation instead of typing at a wall. It's an MCP server
+with local speech engines, so nothing leaves the machine.
+
+Its official installer **rejects Windows outright** (`RuntimeError("Unsupported
+operating system")`) even though the runtime itself is fine. So it has to be
+hand-wired. That procedure is its own repo:
+
+> **[voicemode-windows-setup](https://github.com/Hishor-Ramanathan/voicemode-windows-setup)**
+> — VoiceMode on native Windows: the hand-wired setup that works when the
+> installer says no.
+
+What it stands up:
+
+| Piece | Runs |
+|---|---|
+| VoiceMode | the MCP server, over stdio |
+| speaches (faster-whisper-small) | speech-to-text, Docker, port 2022 |
+| kokoro-fastapi | text-to-speech, Docker, port 8880 |
+| sounddevice | mic and speakers via Windows WASAPI, no WSL layer |
+
+The traps it documents: install with `--no-deps` to dodge the `simpleaudio`
+wheel, put ffmpeg on PATH for MP3, pre-download the Whisper model and run
+speaches offline with fixed model aliases. A `voice.ps1` toggles the containers,
+because leaving two of them running all day is not free.
+
+**MCP registration is machine-specific and stays out of this repo** — see the
+note above. Follow that repo, then register `voicemode.exe` in-app.
+
+### Remote Control at startup
+
+`"remoteControlAtStartup": true` starts every session already connected, instead
+of typing `/rc` each time. One connection per session; needs the claude.ai login.
 
 ---
 

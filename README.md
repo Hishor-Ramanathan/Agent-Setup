@@ -7,6 +7,11 @@ conventions, and the day-to-day working loop. Clone it on a new laptop, follow
 This README is the **explanation** — what each piece is and why it's there.
 `SETUP.md` is the **install procedure**.
 
+One companion repo, kept separate on purpose:
+[**voicemode-windows-setup**](https://github.com/Hishor-Ramanathan/voicemode-windows-setup)
+— getting VoiceMode running on native Windows, where its installer refuses to.
+That's a fix for someone else's bug on one OS; this is how I work. See §4.
+
 ---
 
 ## 1. The mental model: two layers
@@ -66,6 +71,7 @@ turn.
 | **context7** | the context7 plugin | current library docs |
 | **playwright** | the playwright plugin | drive a real browser |
 | **Excalidraw** | claude.ai-hosted, connect in-app | draw diagrams in-panel |
+| **VoiceMode** | `~/.claude.json` (global), after the hand-wiring in [voicemode-windows-setup](https://github.com/Hishor-Ramanathan/voicemode-windows-setup) | spoken replies, so a session becomes a conversation. Local whisper + kokoro in Docker; nothing leaves the machine. See §4. |
 
 CodeGraph is opt-in per repo: a `.codegraph/` directory at the repo root means
 it's indexed. No directory → the global `CLAUDE.md` tells Claude to skip it
@@ -110,6 +116,40 @@ Style beats CLAUDE.md prose, so this is the real control on verbosity.
 `ask` on the destructive set — `git push`, `git reset --hard`, `git clean`,
 `rm -rf`, `manage.py flush`. Everything else runs. I review locally and push
 myself; the agent never pushes.
+
+### Talking to it: voice, and Remote Control
+
+Both are on by default in `global/settings.json`, because both remove a step I
+was doing by hand every session.
+
+**Voice dictation** (`voice.mode: "hold"`) is push-to-talk on **Space**. It fits
+how I work: I sit at the strategy level, so what I hand the agent is *intent* — a
+paragraph of what and why, not code. That's faster spoken than typed. It's also
+the honest version of the input: dictating a paragraph makes me state the goal,
+where typing tempts me to shortcut into naming files. No key, no cloud project,
+no local model — transcription is Anthropic-side.
+
+**VoiceMode** is the other half, and a separate project of mine. Dictation only
+carries words *in*; VoiceMode speaks the reply back, which turns a session into a
+conversation — the mode I actually want for design and grilling, where I'm
+pacing and thinking, not reading a diff. It runs entirely locally (whisper in,
+kokoro out, both in Docker). The catch is that its installer refuses Windows
+outright, so it has to be hand-wired:
+
+> **[voicemode-windows-setup](https://github.com/Hishor-Ramanathan/voicemode-windows-setup)**
+> — VoiceMode on native Windows: the hand-wired setup that works when the
+> installer says no.
+
+That's deliberately its own repo, not folded in here: it's a **fix for a broken
+installer on one OS**, with a shelf life, while this repo is how I work. Sitting
+next to each other but not merged is the point.
+
+**Remote Control** (`remoteControlAtStartup: true`) makes the session reachable
+from the phone the moment it opens, rather than after I remember to type `/rc`.
+Same reasoning as everything else here: if I have to remember it, it isn't set
+up.
+
+Wiring for all three: [`SETUP.md`](SETUP.md#voice--two-separate-things).
 
 ---
 
