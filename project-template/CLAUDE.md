@@ -58,6 +58,8 @@ outranks it.
 | `mrs/archive/` | superseded MRs and abandoned approaches (the paper trail) |
 | `reference/` | this project's standards, conventions, tooling |
 | `reference/prompts/` | the style contracts the hooks inject |
+| `reference/agents/` | how mattpocock-skills is wired to this project |
+| `teach/` | `/teach` workspace, if this project is also a learning surface |
 | `hooks/` | enforcement scripts (see `settings-hooks.md`) |
 | `tools/` | project-specific scripts |
 

@@ -39,7 +39,7 @@ is the on/off switch — installed-but-`false` means it's on disk, dormant.
 | **context7** | `claude-plugins-official` | Live, current library docs (Django, DRF, Angular) via MCP. Kills the "trained-on-2023-Django" hallucinations. |
 | **playwright** | `claude-plugins-official` | Real browser via MCP — click through the Angular wizard, screenshot, read console errors. |
 | **claude-hud** | `claude-hud` ([jarrodwatts/claude-hud](https://github.com/jarrodwatts/claude-hud)) | Status line: context usage, model, cost, session time. Wired via the `statusLine` command in settings.json. |
-| **mattpocock-skills** | `mattpocock` ([mattpocock/skills](https://github.com/mattpocock/skills)) | Engineering skills — issue tracker, triage labels, domain docs, ADRs. This is the backbone of my issue workflow (§5). |
+| **mattpocock-skills** | `mattpocock` ([mattpocock/skills](https://github.com/mattpocock/skills)) | ~35 composable engineering + productivity skills: the grilling family, issue triage, domain docs, `/teach`. This is the backbone of the whole workflow — see §5. |
 
 ### Installed, off
 
@@ -157,17 +157,66 @@ you do X?".
 
 Cite code as `file.py::symbol`, **never** line numbers — they rot.
 
-### The loop: capture → triage → promote → spec → plan → build → push
+### Wiring the skills to the project (do this first)
+
+`mattpocock-skills` is generic on purpose. Three config files tell it what *this*
+project does, and until they exist the skills guess — inventing labels you don't
+use and filing issues where you don't want them. Run once per project:
+
+```
+/setup-matt-pocock-skills
+```
+
+| It writes | Which decides |
+|-----------|---------------|
+| `issue-tracker.md` | what "create an issue" / "fetch the ticket" resolve to |
+| `triage-labels.md` | how the five canonical roles map onto your vocabulary |
+| `domain.md` | single- vs multi-context; where `CONTEXT.md` and `docs/adr/` live |
+
+I move them from the skill's default `docs/agents/` into
+`.claude/reference/agents/` — same reason as everything else in `.claude/`: it
+sits outside every worktree. See
+[`project-template/reference/agents/README.md`](project-template/reference/agents/README.md).
+
+### The loop: grill → capture → triage → promote → spec → plan → build → push
+
+**0. Grill, before anything gets written down.** The
+[grilling](https://aihero.dev/skills-grilling) family interviews you until nothing
+is silently assumed. It works as a **design tree**: each round asks the whole
+*frontier* — every decision whose prerequisites are already settled — so thirteen
+questions land in about three rounds, and you're never asked something that hinges
+on an answer it hasn't heard. Facts it looks up itself via subagents; decisions it
+must wait for.
+
+| What's in front of you | Skill | Leaves behind |
+|---|---|---|
+| An idea, no repo needed | `/grill-me` | nothing — a sharper idea in your head |
+| A repo, one session's worth of change | `/grill-with-docs` | `CONTEXT.md` entries + ADRs, written as terms resolve |
+| Too big for one session | `/wayfinder` | a map of tickets, with grilling inside each |
+| "How should this look/feel?" — ungrillable | `/prototype` | a throwaway to react to, then come back |
+
+`grilling` itself is the only one the model invokes on its own; the rest I type.
+Run them in a **fresh conversation**, plan mode **off** — plan mode rushes toward
+a plan, which is the opposite of staying in inquiry.
+
+The failure mode to watch: answering "agreed, agreed, agreed" for forty questions.
+It feels productive because it was long, and nothing was decided. **A session with
+no pushback from me is a session I didn't need.**
 
 1. **Capture.** Every issue starts as a note in `.claude/issues/`, opened as an
-   Obsidian board. Cheap to write, zero ceremony, no tracker round-trip.
-2. **Triage.** `status:` frontmatter holds one of five roles — `needs-triage`,
-   `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. Vault-local, not
-   remote labels.
-3. **Promote.** Only a fully-specified `ready-for-*` note reaches the real tracker
-   (GitLab/GitHub), via a skill. Most notes never graduate — that's the point.
-4. **Spec.** `.claude/mrs/<mr>/spec.md`. I write the intent; the agent writes the
-   code.
+   Obsidian board (`issues.base`). Cheap to write, zero ceremony, no tracker
+   round-trip. `/to-tickets` turns a grilling session into these.
+2. **Triage.** `/triage` sets `status:` frontmatter — one of `needs-triage`,
+   `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. Local, not remote
+   labels.
+3. **Promote.** Only a fully-specified `ready-for-*` note reaches the real tracker,
+   via a project skill that owns the house format. Most notes never graduate —
+   that's the point. This **inverts the skills' default**, so `issue-tracker.md`
+   states it explicitly.
+4. **Spec.** `/to-spec` on the grilling conversation → `.claude/mrs/<mr>/spec.md`.
+   Do this *instead of* clearing the context: `grill-with-docs` only persists terms
+   and ADR-worthy decisions, so everything else you agreed exists solely in that
+   context window.
 5. **Plan → shape first.** For code, the plan is **class + method signatures with
    one-line docstrings, and which file each lives in**. Bodies only after my go.
    Signatures are where design errors are cheap to catch.
@@ -176,6 +225,72 @@ Cite code as `file.py::symbol`, **never** line numbers — they rot.
    line in review.
 7. **Push.** I review locally and push. The agent never pushes and never adds
    itself as co-author.
+
+### Docs: what earns a file
+
+`grill-with-docs` and `/domain-modeling` write **lazily** — nothing is scaffolded
+up front, files appear the moment something actually resolves:
+
+| What resolved | Where it lands |
+|---|---|
+| A term — the project's own word for a thing | `CONTEXT.md`, inline, the moment it resolves |
+| A decision that is hard to reverse **and** surprising without context **and** a real trade-off | an ADR in `docs/adr/` |
+| Everything else you decided | the conversation, and nowhere else |
+
+All three ADR gates must hold at once, so most decisions don't qualify and most
+sessions produce zero ADRs. **A session that yields a sharper glossary and no ADR
+is working as designed.** `CONTEXT.md` stays a glossary — no implementation
+detail, no spec, no scratch notes.
+
+This is the same instinct as *delete facts, archive decisions*: the glossary is
+the project's vocabulary so humans and agents stop re-deriving it, and the ADR
+folder is the answer to "why didn't you do X?".
+
+### Other skills worth knowing
+
+| Skill | For |
+|---|---|
+| `/wait-what` | the agent's last message re-pitched, because it didn't land |
+| `/research` | a background agent reads primary sources, leaves a cited doc |
+| `/handoff` | spin a tangent out to its own workspace without derailing the session |
+| `/diagnosing-bugs`, `/tdd`, `/implement` | the build-side counterparts |
+| `/code-review`, `/improve-codebase-architecture` | after the fact |
+
+### `/teach` — learning as its own workspace
+
+Separate from shipping. `/teach` turns a directory into a standing course on one
+topic across many sessions. Two things make it different from just asking:
+
+- **It doesn't teach from what the model already knows.** Parametric knowledge is
+  treated as untrusted — it finds high-trust sources first, records them in
+  `RESOURCES.md`, and cites them in every lesson.
+- **It's stateful.** The mission, resources, lessons and what you've demonstrably
+  learned are files, so the next session resumes from those rather than from
+  whatever survived the last context window.
+
+```
+MISSION.md          why you're learning this — everything hangs off it
+RESOURCES.md        the vetted sources, split Knowledge / Wisdom
+lessons/*.html      the numbered lessons
+reference/*.html    cheat-sheets and glossaries — what you return to
+learning-records/   ADR-style notes on what you've actually learned
+NOTES.md            your teaching preferences
+assets/             shared stylesheet, so it reads as one course
+```
+
+It targets **storage strength** (long-term retention) over **fluency** (the
+in-the-moment recall that feels like mastery while reading and is gone in a week)
+— via retrieval practice, spacing, interleaving. The **mission** is what stops
+lessons drifting abstract, and it plus the learning records pick the next lesson
+inside your zone of proximal development.
+
+One mission per workspace. The docs say keep it out of the project you're working
+in; I keep mine at `.claude/teach/` anyway, because the vault *is* the learning
+surface and Obsidian renders it. Take that as a deliberate deviation, not the
+recommendation.
+
+Reach for it when the learning **is** the project. For one idea explained in
+passing, just ask.
 
 ### Division of labour
 
@@ -228,5 +343,6 @@ draw every turn — draw at review checkpoints.
     ├── settings-hooks.md      copy-paste hook wiring
     ├── hooks/                 working hook examples
     ├── reference/prompts/     how to write the style contracts hooks inject
-    └── docs/ issues/ mrs/ tools/
+    ├── reference/agents/      wiring mattpocock-skills to the project
+    └── docs/ issues/ mrs/ teach/ tools/
 ```

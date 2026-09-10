@@ -1,5 +1,6 @@
 {
   "model": "opus[1m]",
+  "remoteControlAtStartup": true,
   "effortLevel": "high",
   "theme": "dark",
   "permissions": {
