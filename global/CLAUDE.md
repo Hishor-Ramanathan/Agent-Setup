@@ -40,3 +40,12 @@ every line.
 Research before explaining — cite authoritative sources (official docs, PEPs,
 RFCs). Never hallucinate; if you can't find a source, say so. Read existing code
 before rewriting it.
+
+## Keeping Agent-Setup current
+
+This setup lives in the public repo `Hishor-Ramanathan/Agent-Setup`, cloned at `~/Agent-Setup`.
+When you change the shared setup on any machine (this file, `reference/`, output styles, a skill
+meant for every machine, the plugin list), run `bash ~/Agent-Setup/sync.sh [new-skill ...]`, put
+plugin changes into `global/settings.json`, then commit on a branch and open a PR.
+Never put tokens, `.env` files or machine details (hostnames, tailnet names, private repo names)
+in it. Machine-only things (secret forms, server hooks, sandbox rules) stay on that machine.
