@@ -17,23 +17,35 @@ The *why* is in [`README.md`](README.md). This is the procedure.
 
 ---
 
-## Step 1 — Global (`~/.claude/`, once per laptop)
+## Step 1 — Global (`~/.claude/`, once per machine): one command
 
-```bash
-cp global/CLAUDE.md          ~/.claude/CLAUDE.md
-cp -r global/reference       ~/.claude/reference
-cp -r global/skills/*        ~/.claude/skills/
-cp -r global/output-styles/* ~/.claude/output-styles/
+Log in to Claude Code first (`claude`, then `/login`). Then:
+
+```powershell
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/Hishor-Ramanathan/Agent-Setup/main/install.ps1 | iex
 ```
 
-Then **merge** `global/settings.json` into `~/.claude/settings.json` (don't
-overwrite — yours may hold auth/remote state). The blocks that matter:
+```bash
+# Linux / macOS (needs git + python3)
+curl -fsSL https://raw.githubusercontent.com/Hishor-Ramanathan/Agent-Setup/main/install.sh | bash
+```
 
-- `enabledPlugins` + `extraKnownMarketplaces` — Claude Code installs these on restart.
-- `hooks.UserPromptSubmit` → `codegraph prompt-hook`. Drop it if you don't use CodeGraph.
-- `statusLine` — the claude-hud command. Drop the block if you skip claude-hud (it errors without it).
-- `model: opus[1m]`, `effortLevel: high`, `theme: dark`.
-- `voice` + `remoteControlAtStartup` — see below.
+It clones this repo to `~/Agent-Setup`, copies `global/` (CLAUDE.md, reference, skills, output
+styles) into `~/.claude/`, **merges** `global/settings.json` into `~/.claude/settings.json` (repo
+keys win, your other keys stay, backups as `*.bak-<date>`), and installs every enabled plugin.
+It leaves out the CodeGraph hook when `codegraph` is missing and the claude-hud status line when
+`node` is missing. Re-run it any time to update.
+
+Manual, on purpose: logins (`claude`, `gh auth login`, `tailscale up`), MCP servers in
+`~/.claude.json`, Telegram, and anything machine-specific.
+
+### Keeping it current
+
+Changed the setup on a machine? `bash ~/Agent-Setup/sync.sh [new-skill ...]` copies it back into
+the repo, refuses if anything looks like a secret, and shows the diff. Plugin changes go into
+`global/settings.json` by hand. Then branch, commit, PR. The global `CLAUDE.md` tells agents to do
+this whenever they change the setup.
 
 **Restart Claude Code.** Verify with `/plugin` and `/status`.
 

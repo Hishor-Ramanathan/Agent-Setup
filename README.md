@@ -1,8 +1,8 @@
 # Agent-Setup — how I run Claude Code
 
 My portable Claude Code setup: plugins, skills, hooks, output style, folder
-conventions, and the day-to-day working loop. Clone it on a new laptop, follow
-[`SETUP.md`](SETUP.md), and you get the same agent I work with.
+conventions, and the day-to-day working loop. On a new machine run the one-line installer in
+[`SETUP.md`](SETUP.md) and you get the same agent I work with.
 
 This README is the **explanation** — what each piece is and why it's there.
 `SETUP.md` is the **install procedure**.

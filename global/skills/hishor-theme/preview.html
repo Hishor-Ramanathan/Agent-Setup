@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hishor theme</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+  /* Reference layout: compare a built app against this page. */
+  * { box-sizing: border-box; }
+  body { display: grid; grid-template-columns: 220px 1fr; grid-template-rows: auto 1fr; min-height: 100vh; }
+  header { grid-column: 1 / -1; background: var(--bg-crust); padding: 10px 16px; font-weight: 600; border-bottom: 1px solid var(--surface-0); }
+  nav { background: var(--bg-mantle); padding: 16px; border-right: 1px solid var(--surface-0); }
+  nav a { display: block; padding: 6px 10px; border-radius: 6px; color: var(--text-muted); text-decoration: none; }
+  nav a + a { margin-top: 2px; }
+  nav .count { float: right; font-size: 13px; }
+  main { padding: 24px; max-width: 720px; }
+  h1 { margin: 0 0 4px; font-size: 26px; }
+  .muted { color: var(--text-muted); }
+  .card { background: var(--surface-0); border-radius: var(--radius); padding: 16px; margin: 20px 0; }
+  input { width: 100%; padding: 10px; margin: 8px 0 14px; background: var(--bg-base); color: var(--text); border: 1px solid var(--surface-1); border-radius: var(--radius); font: inherit; }
+  .btn { padding: 10px 18px; border-radius: var(--radius); border: 0; font: 600 15px var(--font); cursor: pointer; }
+  .btn.primary { background: var(--primary-bg); box-shadow: var(--primary-ring); color: var(--accent-text); }
+  .btn.primary:hover { background: var(--primary-bg-hover); }
+  .btn.secondary { background: var(--surface-1); color: var(--text); margin-left: 8px; }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-text); font-size: 13px; }
+  .status span { margin-right: 14px; }
+  @media (max-width: 640px) { body { grid-template-columns: 1fr; } nav { display: none; } main { padding: 16px; } }
+</style></head>
+<body>
+  <header>my-app</header>
+  <nav><a class="is-selected" href="#">Studies <span class="count">111</span></a><a href="#">Siemens <span class="count">0</span></a><a href="#">Settings</a></nav>
+  <main>
+    <h1>Dashboard</h1>
+    <p class="muted">Royal blue on Catppuccin Mocha. <a href="#">A link</a> · <span class="tag">Tag</span></p>
+    <div class="card">
+      <strong>Card</strong>
+      <label class="muted" style="display:block;margin-top:10px">Input field</label>
+      <input placeholder="Type something…">
+      <button class="btn primary">Save</button><button class="btn secondary">Cancel</button>
+    </div>
+    <p class="status"><span style="color:var(--success)">● success</span><span style="color:var(--warning)">● warning</span><span style="color:var(--danger)">● danger</span></p>
+  </main>
+</body></html>
